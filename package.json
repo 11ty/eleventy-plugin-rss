@@ -1,5 +1,5 @@
 {
-  "name": "eleventy-plugin-rss",
+  "name": "@11ty/eleventy-plugin-rss",
   "version": "1.0.0",
   "description": " A pack of Eleventy plugins for generating an RSS feed. ",
   "main": ".eleventy.js",
