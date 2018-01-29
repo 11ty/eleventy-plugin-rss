@@ -8,7 +8,7 @@ A pack of Eleventy plugins for generating an RSS feed using the Nunjucks templat
 Available on [npm](https://www.npmjs.com/package/@11ty/eleventy-plugin-rss).
 
 ```
-npm install @11ty/eleventy-plugin-rss` --save
+npm install @11ty/eleventy-plugin-rss --save
 ```
 
 ## Usage
