@@ -1,7 +1,6 @@
 # eleventy-plugins-rss
 
-A pack of Eleventy plugins for generating an RSS feed using the Nunjucks templating engine.
-
+A pack of [Eleventy](https://github.com/11ty/eleventy) plugins for generating an RSS feed using the Nunjucks templating engine.
 
 ## Installation
 
