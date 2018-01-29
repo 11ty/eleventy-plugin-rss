@@ -2,9 +2,20 @@
 
 A pack of Eleventy plugins for generating an RSS feed using the Nunjucks templating engine.
 
-See `sample/feed.njk` for an example RSS feed template.
 
-## Nunjucks Filters
+## Installation
+
+Available on [npm](https://www.npmjs.com/package/@11ty/eleventy-plugin-rss).
+
+```
+npm install @11ty/eleventy-plugin-rss` --save
+```
+
+## Usage
+
+See `sample/feed.njk` for an example RSS (actually Atom `¯\_(ツ)_/¯`) feed template.
+
+### Supplies: Nunjucks Filters
 
 * `rssLastUpdatedDate`: Gets the most recently updated content in the collection and retrieves the properly formatted Date for the top-level `<updated>` element.
 * `rssDate`: format a Date to be used for individual `<entry><updated>` elements.
