@@ -3,6 +3,10 @@ const urls = require('posthtml-urls')
 const absoluteUrl = require("./absoluteUrl");
 
 module.exports = function(htmlContent, base) {
+  if( !base ) {
+    throw new Error( "eleventy-plugin-rss, htmlToAbsoluteUrls(absolutePostUrl) was missing the full URL base `absolutePostUrl` argument.")
+  }
+
   let options = {
     eachURL: function(url, attr, element) {
       url = url.trim();
