@@ -10,6 +10,17 @@ Available on [npm](https://www.npmjs.com/package/@11ty/eleventy-plugin-rss).
 npm install @11ty/eleventy-plugin-rss --save
 ```
 
+Open up your Eleventy config file (probably `.eleventy.js`) and use `addPlugin`:
+
+```
+const pluginRss = require("@11ty/eleventy-plugin-rss");
+module.exports = function(eleventyConfig) {
+  eleventyConfig.addPlugin(pluginRss);
+};
+```
+
+[Read more about Eleventy plugins.](https://github.com/11ty/eleventy/blob/master/docs/plugins.md)
+
 ## Usage
 
 See `sample/feed.njk` for an example RSS (actually Atom `¯\_(ツ)_/¯`) feed template.
