@@ -19,7 +19,7 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-[Read more about Eleventy plugins.](https://github.com/11ty/eleventy/blob/master/docs/plugins.md)
+Read more about [Eleventy plugins.](https://www.11ty.io/docs/plugins/)
 
 ## Usage
 
