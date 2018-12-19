@@ -7,3 +7,7 @@ test("Changes a link href", async t => {
   t.is((await htmlToAbsUrls(`<img src="/test.png">`, "http://example.com/")).html, `<img src="http://example.com/test.png">`);
   t.is((await htmlToAbsUrls(`<a href="http://someotherdomain/">Hello</a>`, "http://example.com/")).html, `<a href="http://someotherdomain/">Hello</a>`);
 });
+
+test("Bad link href", async t => {
+  t.is((await htmlToAbsUrls(`<a href="http://#">Hello</a>`, "http://example.com/")).html, `<a href="http://#">Hello</a>`);
+});
