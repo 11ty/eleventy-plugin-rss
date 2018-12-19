@@ -1,6 +1,6 @@
 {
   "name": "@11ty/eleventy-plugin-rss",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A pack of Eleventy plugins for generating an RSS feed using the Nunjucks templating engine.",
   "main": ".eleventy.js",
   "scripts": {
@@ -11,7 +11,8 @@
     "url": "git+https://github.com/11ty/eleventy-plugin-rss.git"
   },
   "keywords": [
-    "eleventy"
+    "eleventy",
+    "eleventy-plugin"
   ],
   "author": {
     "name": "Zach Leatherman",
