@@ -24,10 +24,10 @@
   },
   "homepage": "https://github.com/11ty/eleventy-plugin-rss#readme",
   "devDependencies": {
+    "@11ty/eleventy": "^0.6.0",
     "ava": "^0.25.0"
   },
   "dependencies": {
-    "@11ty/eleventy": "^0.3.1",
     "luxon": "^1.0.0",
     "posthtml": "^0.11.2",
     "posthtml-urls": "^1.0.0"
