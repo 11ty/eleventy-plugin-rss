@@ -29,6 +29,7 @@
     "ava": "^1.0.1"
   },
   "dependencies": {
+    "debug": "^4.1.1",
     "luxon": "^1.0.0",
     "posthtml": "^0.11.2",
     "posthtml-urls": "^1.0.0"
