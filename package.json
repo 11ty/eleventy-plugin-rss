@@ -1,6 +1,6 @@
 {
   "name": "@11ty/eleventy-plugin-rss",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A pack of Eleventy plugins for generating an RSS feed using the Nunjucks templating engine.",
   "main": ".eleventy.js",
   "scripts": {
@@ -32,6 +32,6 @@
     "debug": "^4.1.1",
     "luxon": "^1.0.0",
     "posthtml": "^0.11.2",
-    "posthtml-urls": "^1.0.0"
+    "posthtml-urls": "1.0.0"
   }
 }
