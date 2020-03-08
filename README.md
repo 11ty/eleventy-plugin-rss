@@ -7,7 +7,7 @@ A pack of [Eleventy](https://github.com/11ty/eleventy) plugins for generating an
 Available on [npm](https://www.npmjs.com/package/@11ty/eleventy-plugin-rss).
 
 ```
-npm install @11ty/eleventy-plugin-rss --save
+npm install @11ty/eleventy-plugin-rss --save-dev
 ```
 
 Open up your Eleventy config file (probably `.eleventy.js`) and use `addPlugin`:
