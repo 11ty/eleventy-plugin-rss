@@ -9,7 +9,7 @@ module.exports = function(eleventyConfig) {
     }
 
     // Newest date in the collection
-    return dateToISO(collection[ collection.length - 1 ].date);
+    return dateToISO(new Date(Math.max(...collection.map(item => {return item.date})));
   });
 
   eleventyConfig.addNunjucksFilter("rssDate", dateObj => dateToISO(dateObj));
