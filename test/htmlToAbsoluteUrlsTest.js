@@ -1,5 +1,5 @@
 import test from "ava";
-import htmlToAbsUrls from "../src/HtmlToAbsoluteUrls.js";
+import htmlToAbsUrls from "../src/htmlToAbsoluteUrls.js";
 
 test("Changes a link href", async t => {
   t.is((await htmlToAbsUrls(`<a href="#testanchor">Hello</a>`, "http://example.com/")).html, `<a href="#testanchor">Hello</a>`);
