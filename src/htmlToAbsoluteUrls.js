@@ -16,6 +16,11 @@ module.exports = function(htmlContent, base) {
         return url;
       }
 
+      // data URIs
+      if( url.indexOf("data:") === 0 ) {
+        return url;
+      }
+
       return absoluteUrl(url, base);
     }
   };
