@@ -2,13 +2,21 @@
   "name": "@11ty/eleventy-plugin-rss",
   "version": "1.0.7",
   "description": "A pack of Eleventy plugins for generating an RSS feed using the Nunjucks templating engine.",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": ".eleventy.js",
   "scripts": {
-    "test": "npx ava"
+    "test": "npx ava",
+    "sample": "npx @11ty/eleventy --input=sample"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/11ty/eleventy-plugin-rss.git"
+  },
+  "funding": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/11ty"
   },
   "keywords": [
     "eleventy",
@@ -23,9 +31,11 @@
   "bugs": {
     "url": "https://github.com/11ty/eleventy-plugin-rss/issues"
   },
-  "homepage": "https://github.com/11ty/eleventy-plugin-rss#readme",
+  "homepage": "https://www.11ty.dev/docs/plugins/rss/",
+  "peerDependencies": {
+    "@11ty/eleventy": "^0.11.0"
+  },
   "devDependencies": {
-    "@11ty/eleventy": "^0.11.0",
     "ava": "^1.0.1"
   },
   "dependencies": {

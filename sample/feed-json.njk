@@ -1,0 +1,40 @@
+---json
+{
+  "permalink": "feed.json",
+  "eleventyExcludeFromCollections": true,
+  "metadata": {
+    "title": "My Blog about Boats",
+    "subtitle": "I am writing about my experiences as a naval navel-gazer.",
+    "url": "https://example.com/",
+    "feedUrl": "https://example.com/feed.json",
+    "author": {
+      "name": "Boaty McBoatFace",
+      "url": "https://example.com/about-boaty/"
+    }
+  }
+}
+---
+{
+  "version": "https://jsonfeed.org/version/1",
+  "title": "{{ metadata.title }}",
+  "home_page_url": "{{ metadata.url }}",
+  "feed_url": "{{ metadata.feedUrl }}",
+  "description": "{{ metadata.subtitle }}",
+  "author": {
+    "name": "{{ metadata.author.name }}",
+    "url": "{{ metadata.author.url }}"
+  },
+  "items": [
+    {%- for post in collections.posts | reverse %}
+    {%- set absolutePostUrl %}{{ post.url | url | absoluteUrl(metadata.url) }}{% endset -%}
+    {
+      "id": "{{ absolutePostUrl }}",
+      "url": "{{ absolutePostUrl }}",
+      "title": "{{ post.data.title }}",
+      "content_html": {% if post.templateContent %}{{ post.templateContent | dump | safe }}{% else %}""{% endif %},
+      "date_published": "{{ post.date | rssDate }}"
+    }
+    {% if not loop.last %},{% endif %}
+    {%- endfor %}
+  ]
+}
