@@ -8,7 +8,7 @@
   "main": ".eleventy.js",
   "scripts": {
     "test": "npx ava",
-    "sample": "npx @11ty/eleventy --input=sample"
+    "sample": "cd sample && npx @11ty/eleventy --config=config-sample.js"
   },
   "repository": {
     "type": "git",

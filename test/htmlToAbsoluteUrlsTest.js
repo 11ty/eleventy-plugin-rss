@@ -12,3 +12,16 @@ test("Changes a link href", async t => {
 test("Bad link href", async t => {
   t.is((await htmlToAbsUrls(`<a href="http://#">Hello</a>`, "http://example.com/")).html, `<a href="http://#">Hello</a>`);
 });
+
+test("Line breaks, Issue #12", async t => {
+  let processOptions = {
+    closingSingleTag: "slash"
+  };
+
+  t.is((await htmlToAbsUrls(`<br/>`, "http://example.com/")).html, `<br>`);
+  t.is((await htmlToAbsUrls(`<br/>`, "http://example.com/", processOptions)).html, `<br />`);
+
+  let processed = await htmlToAbsUrls(`<img src="/test.png">`, "http://example.com/", processOptions);
+  t.is(processed.html, `<img src="http://example.com/test.png" />`);
+});
+

@@ -2,7 +2,11 @@ const dateToISO = require("./src/dateToISO");
 const absoluteUrl = require("./src/absoluteUrl");
 const htmlToAbsoluteUrls = require("./src/htmlToAbsoluteUrls");
 
-module.exports = function(eleventyConfig) {
+const defaultPosthtmlRenderOptions = {
+  closingSingleTag: "slash"
+};
+
+module.exports = function(eleventyConfig, options = {}) {
   eleventyConfig.addNunjucksFilter("rssLastUpdatedDate", collection => {
     if( !collection || !collection.length ) {
       throw new Error( "Collection is empty in rssLastUpdatedDate filter." );
@@ -16,13 +20,15 @@ module.exports = function(eleventyConfig) {
 
   eleventyConfig.addNunjucksFilter("absoluteUrl", (href, base) => absoluteUrl(href, base));
 
-  eleventyConfig.addNunjucksAsyncFilter("htmlToAbsoluteUrls", (htmlContent, base, callback) => {
+  eleventyConfig.addNunjucksAsyncFilter("htmlToAbsoluteUrls", (htmlContent, base, urlOptions, callback) => {
     if(!htmlContent) {
       callback(null, "");
       return;
     }
 
-    htmlToAbsoluteUrls(htmlContent, base).then(result => {
+    let posthtmlOptions = Object.assign({}, defaultPosthtmlRenderOptions, options.posthtmlRenderOptions, urlOptions);
+
+    htmlToAbsoluteUrls(htmlContent, base, posthtmlOptions).then(result => {
       callback(null, result.html);
     });
   });
