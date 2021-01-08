@@ -9,14 +9,7 @@ module.exports = function(htmlContent, base) {
 
   let options = {
     eachURL: function(url, attr, element) {
-      url = url.trim();
-
-      // #anchor in-page
-      if( url.indexOf("#") === 0 ) {
-        return url;
-      }
-
-      return absoluteUrl(url, base);
+      return absoluteUrl(url.trim(), base);
     }
   };
 
