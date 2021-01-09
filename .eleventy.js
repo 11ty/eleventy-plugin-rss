@@ -20,13 +20,13 @@ module.exports = function(eleventyConfig, options = {}) {
 
   eleventyConfig.addNunjucksFilter("absoluteUrl", (href, base) => absoluteUrl(href, base));
 
-  eleventyConfig.addNunjucksAsyncFilter("htmlToAbsoluteUrls", (htmlContent, base, urlOptions, callback) => {
+  eleventyConfig.addNunjucksAsyncFilter("htmlToAbsoluteUrls", (htmlContent, base, callback) => {
     if(!htmlContent) {
       callback(null, "");
       return;
     }
 
-    let posthtmlOptions = Object.assign({}, defaultPosthtmlRenderOptions, options.posthtmlRenderOptions, urlOptions);
+    let posthtmlOptions = Object.assign({}, defaultPosthtmlRenderOptions, options.posthtmlRenderOptions);
 
     htmlToAbsoluteUrls(htmlContent, base, posthtmlOptions).then(result => {
       callback(null, result.html);
