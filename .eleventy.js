@@ -1,6 +1,6 @@
 const dateRfc3339 = require("./src/dateRfc3339");
 const absoluteUrl = require("./src/absoluteUrl");
-const htmlToAbsoluteUrls = require("./src/htmlToAbsoluteUrls");
+const convertHtmlToAbsoluteUrls = require("./src/htmlToAbsoluteUrls");
 
 function getNewestCollectionItemDate(collection) {
   if( !collection || !collection.length ) {
@@ -10,13 +10,8 @@ function getNewestCollectionItemDate(collection) {
   return new Date(Math.max(...collection.map(item => {return item.date})));
 }
 
-async function convertHtmlToUseAbsoluteUrls(htmlContent, base, options) {
-  let result = await htmlToAbsoluteUrls(htmlContent, base, options);
-  return result.html;
-}
-
 module.exports = function(eleventyConfig, options = {}) {
-  eleventyConfig.addNunjucksFilter("absoluteUrl", (href, base) => absoluteUrl(href, base));
+  eleventyConfig.addNunjucksFilter("absoluteUrl", absoluteUrl);
 
   eleventyConfig.addNunjucksAsyncFilter("htmlToAbsoluteUrls", (htmlContent, base, callback) => {
     if(!htmlContent) {
@@ -29,7 +24,7 @@ module.exports = function(eleventyConfig, options = {}) {
       closingSingleTag: "slash"
     }, options.posthtmlRenderOptions);
 
-    convertHtmlToUseAbsoluteUrls(htmlContent, base, posthtmlOptions).then(html => {
+    convertHtmlToAbsoluteUrls(htmlContent, base, posthtmlOptions).then(html => {
       callback(null, html);
     });
   });
@@ -48,3 +43,8 @@ module.exports = function(eleventyConfig, options = {}) {
   // Deprecated, this name is incorrect! Issue #8
   eleventyConfig.addNunjucksFilter("rssDate", dateRfc3339);
 };
+
+module.exports.dateToRfc3339 = dateRfc3339;
+module.exports.getNewestCollectionItemDate = getNewestCollectionItemDate;
+module.exports.absoluteUrl = absoluteUrl;
+module.exports.convertHtmlToAbsoluteUrls = convertHtmlToAbsoluteUrls;
