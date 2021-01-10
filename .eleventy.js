@@ -1,14 +1,7 @@
 const dateRfc3339 = require("./src/dateRfc3339");
 const absoluteUrl = require("./src/absoluteUrl");
 const convertHtmlToAbsoluteUrls = require("./src/htmlToAbsoluteUrls");
-
-function getNewestCollectionItemDate(collection) {
-  if( !collection || !collection.length ) {
-    throw new Error( "Collection is empty in rssLastUpdatedDate filter." );
-  }
-
-  return new Date(Math.max(...collection.map(item => {return item.date})));
-}
+const getNewestCollectionItemDate = require("./src/getNewestCollectionItemDate");
 
 module.exports = function(eleventyConfig, options = {}) {
   eleventyConfig.addNunjucksFilter("absoluteUrl", absoluteUrl);
@@ -30,9 +23,7 @@ module.exports = function(eleventyConfig, options = {}) {
   });
 
   // Dates
-  eleventyConfig.addNunjucksFilter("getNewestCollectionItemDate", collection => {
-    return getNewestCollectionItemDate(collection);
-  });
+  eleventyConfig.addNunjucksFilter("getNewestCollectionItemDate", getNewestCollectionItemDate);
   eleventyConfig.addNunjucksFilter("dateToRfc3339", dateRfc3339);
 
   // Deprecated, these names are incorrect! Issue #8
