@@ -2,11 +2,10 @@
 
 # eleventy-plugin-rss
 
-A pack of [Eleventy](https://github.com/11ty/eleventy) filters for generating Atom and JSON feeds using the Nunjucks templating engine.
+A pack of [Eleventy](https://github.com/11ty/eleventy) filters for generating Atom, JSON and RSS feeds using the Nunjucks templating engine.
 
-_Note: the plugin is called RSS but does not technically include an example of an RSS feed. Generally feed readers that support RSS also support Atom. If you’d like to contribute an example, a pull request would be welcome!_
 
-See `sample/feed.njk` for an example Atom feed template or `sample/feed.json` for an example JSON feed template.
+See `sample/feed.njk` for an example Atom feed template, `sample/feed.json` for an example JSON feed template, or `sample/feed-rss.njk` for an example JSON feed template.
 
 ## [The full `eleventy-plugin-rss` documentation is on 11ty.dev](https://www.11ty.dev/docs/plugins/rss/).
 
