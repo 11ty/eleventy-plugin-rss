@@ -3,7 +3,6 @@ const dateRfc822 = require("./src/dateRfc822");
 const absoluteUrl = require("./src/absoluteUrl");
 const convertHtmlToAbsoluteUrls = require("./src/htmlToAbsoluteUrls");
 const getNewestCollectionItemDate = require("./src/getNewestCollectionItemDate");
-const escapeXml= require("./src/escapeXml");
 
 module.exports = function(eleventyConfig, options = {}) {
   eleventyConfig.addNunjucksFilter("absoluteUrl", absoluteUrl);
@@ -28,9 +27,6 @@ module.exports = function(eleventyConfig, options = {}) {
   eleventyConfig.addNunjucksFilter("getNewestCollectionItemDate", getNewestCollectionItemDate);
   eleventyConfig.addNunjucksFilter("dateToRfc3339", dateRfc3339);
   eleventyConfig.addNunjucksFilter("dateToRfc822", dateRfc822);
-
-  // Escape XML for RSS Feeds
-  eleventyConfig.addNunjucksFilter("escapeXml", escapeXml);
 
   // Deprecated, these names are incorrect! Issue #8
   eleventyConfig.addNunjucksFilter("rssLastUpdatedDate", collection => {
