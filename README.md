@@ -1,6 +1,6 @@
 <p align="center"><img src="https://www.11ty.dev/img/logo-github.png" alt="eleventy Logo"></p>
 
-# eleventy-plugin-rss
+# eleventy-plugin-rss 🕚⚡️🎈🐀
 
 A pack of [Eleventy](https://github.com/11ty/eleventy) filters for generating Atom and JSON feeds using the Nunjucks templating engine.
 
