@@ -5,7 +5,7 @@
 A pack of [Eleventy](https://github.com/11ty/eleventy) filters for generating Atom, JSON and RSS feeds using the Nunjucks templating engine.
 
 
-See `sample/feed.njk` for an example Atom feed template, `sample/feed.json` for an example JSON feed template, or `sample/feed-rss.njk` for an example JSON feed template.
+See `sample/feed.njk` for an example Atom feed template, `sample/feed.json` for an example JSON feed template, or `sample/feed-rss.njk` for an example RSS feed template.
 
 ## [The full `eleventy-plugin-rss` documentation is on 11ty.dev](https://www.11ty.dev/docs/plugins/rss/).
 
