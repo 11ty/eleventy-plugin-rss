@@ -1,5 +1,6 @@
 const pkg = require("./package.json");
 const dateRfc3339 = require("./src/dateRfc3339");
+const dateRfc822 = require("./src/dateRfc822");
 const absoluteUrl = require("./src/absoluteUrl");
 const convertHtmlToAbsoluteUrls = require("./src/htmlToAbsoluteUrls");
 const getNewestCollectionItemDate = require("./src/getNewestCollectionItemDate");
@@ -32,6 +33,7 @@ module.exports = function(eleventyConfig, options = {}) {
   // Dates
   eleventyConfig.addNunjucksFilter("getNewestCollectionItemDate", getNewestCollectionItemDate);
   eleventyConfig.addNunjucksFilter("dateToRfc3339", dateRfc3339);
+  eleventyConfig.addNunjucksFilter("dateToRfc822", dateRfc822);
 
   // Deprecated, these names are incorrect! Issue #8
   eleventyConfig.addNunjucksFilter("rssLastUpdatedDate", collection => {
@@ -43,6 +45,7 @@ module.exports = function(eleventyConfig, options = {}) {
 };
 
 module.exports.dateToRfc3339 = dateRfc3339;
+module.exports.dateToRfc822 = dateRfc822;
 module.exports.getNewestCollectionItemDate = getNewestCollectionItemDate;
 module.exports.absoluteUrl = absoluteUrl;
 module.exports.convertHtmlToAbsoluteUrls = convertHtmlToAbsoluteUrls;
