@@ -2,11 +2,12 @@
 {
   "permalink": "feed.json",
   "eleventyExcludeFromCollections": true,
+  "normalizeAbsoluteUrls": true,
   "metadata": {
     "title": "My Blog about Boats",
     "subtitle": "I am writing about my experiences as a naval navel-gazer.",
+    "language": "en",
     "url": "https://example.com/",
-    "feedUrl": "https://example.com/feed.json",
     "author": {
       "name": "Boaty McBoatFace",
       "url": "https://example.com/about-boaty/"
@@ -17,8 +18,9 @@
 {
   "version": "https://jsonfeed.org/version/1",
   "title": "{{ metadata.title }}",
+  "language": "{{ metadata.language }}",
   "home_page_url": "{{ metadata.url }}",
-  "feed_url": "{{ metadata.feedUrl }}",
+  "feed_url": "{{ permalink | absoluteUrl(metadata.url) }}",
   "description": "{{ metadata.subtitle }}",
   "author": {
     "name": "{{ metadata.author.name }}",
@@ -26,12 +28,18 @@
   },
   "items": [
     {%- for post in collections.posts | reverse %}
-    {%- set absolutePostUrl %}{{ post.url | url | absoluteUrl(metadata.url) }}{% endset -%}
+    {%- set absolutePostUrl = post.url | url | absoluteUrl(metadata.url) %}
     {
       "id": "{{ absolutePostUrl }}",
       "url": "{{ absolutePostUrl }}",
       "title": "{{ post.data.title }}",
-      "content_html": {% if post.templateContent %}{{ post.templateContent | dump | safe }}{% else %}""{% endif %},
+      "content_html": {% if post.templateContent -%}
+        {%- if normalizeAbsoluteUrls -%}
+          {{ post.templateContent | htmlToAbsoluteUrls(absolutePostUrl) | dump | safe }}
+        {%- else -%}
+          {{ post.templateContent | dump | safe }}
+        {%- endif -%}
+      {%- else %}""{% endif %},
       "date_published": "{{ post.date | dateToRfc3339 }}"
     }
     {% if not loop.last %},{% endif %}

@@ -2,11 +2,12 @@
 {
   "permalink": "feed.xml",
   "eleventyExcludeFromCollections": true,
+  "normalizeAbsoluteUrls": true,
   "metadata": {
     "title": "My Blog about Boats",
     "subtitle": "I am writing about my experiences as a naval navel-gazer.",
+    "language": "en",
     "url": "https://example.com/",
-    "feedUrl": "https://example.com/feed.xml",
     "author": {
       "name": "Boaty McBoatFace",
       "email": "me@example.com"
@@ -15,10 +16,10 @@
 }
 ---
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
+<feed xmlns="http://www.w3.org/2005/Atom" xml:base="{{ metadata.language }}">
   <title>{{ metadata.title }}</title>
   <subtitle>{{ metadata.subtitle }}</subtitle>
-  <link href="{{ metadata.feedUrl }}" rel="self"/>
+  <link href="{{ permalink | absoluteUrl(metadata.url) }}" rel="self"/>
   <link href="{{ metadata.url }}"/>
   <updated>{{ collections.posts | getNewestCollectionItemDate | dateToRfc3339 }}</updated>
   <id>{{ metadata.url }}</id>
@@ -33,7 +34,13 @@
     <link href="{{ absolutePostUrl }}"/>
     <updated>{{ post.date | dateToRfc3339 }}</updated>
     <id>{{ absolutePostUrl }}</id>
-    <content type="html">{{ post.templateContent | htmlToAbsoluteUrls(absolutePostUrl) }}</content>
+    <content type="html">
+      {%- if normalizeAbsoluteUrls -%}
+        {{ post.templateContent | htmlToAbsoluteUrls(absolutePostUrl) }}
+      {%- else -%}
+        {{ post.templateContent }}
+      {%- endif -%}
+    </content>
   </entry>
   {%- endfor %}
 </feed>
