@@ -22,10 +22,12 @@
   "home_page_url": "{{ metadata.url }}",
   "feed_url": "{{ permalink | url | absoluteUrl(metadata.url) }}",
   "description": "{{ metadata.subtitle }}",
-  "author": {
-    "name": "{{ metadata.author.name }}",
-    "url": "{{ metadata.author.url }}"
-  },
+  "authors": [
+    {
+      "name": "{{ metadata.author.name }}",
+      "url": "{{ metadata.author.url }}"
+    }
+  ],
   "items": [
     {%- for post in collections.posts | reverse %}
     {%- set absolutePostUrl = post.url | url | absoluteUrl(metadata.url) %}
