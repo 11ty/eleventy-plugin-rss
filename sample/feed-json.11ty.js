@@ -22,10 +22,12 @@ module.exports.render = async function({ permalink, metadata, collections, norma
     home_page_url: metadata.url,
     feed_url: this.absoluteUrl(this.url(permalink), metadata.url),
     description: metadata.subtitle,
-    author: {
-      name: metadata.author.name,
-      url: metadata.author.url,
-    },
+    authors: [
+      {
+        name: metadata.author.name,
+        url: metadata.author.url,
+      }
+    ],
     items: []
   };
 
