@@ -15,9 +15,8 @@ module.exports = function pubDateRFC822(value) {
   };
 
   const formatedDate = new Intl.DateTimeFormat('en-US', options).format(date);
-  const [wkd, mmm, dd, yyyy, time, z] = formatedDate
-    .replace(/([,\s+\-]+)/g, ' ')
-    .split(' ');
+  const [wkd, mmm, dd, yyyy, time, z] = formatedDate.replace(/([,\s+\-]+)/g, ' ').split(' ');
+  const tz = `${z}`.replace(/UTC/, 'GMT');
 
-  return `${wkd}, ${dd} ${mmm} ${yyyy} ${time} ${z}`.trim();
+  return `${wkd}, ${dd} ${mmm} ${yyyy} ${time} ${tz}`;
 }
