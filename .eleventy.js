@@ -35,13 +35,15 @@ module.exports = function(eleventyConfig, options = {}) {
   eleventyConfig.addNunjucksFilter("dateToRfc3339", dateRfc3339);
   eleventyConfig.addNunjucksFilter("dateToRfc822", dateRfc822);
 
-  // Deprecated, these names are incorrect! Issue #8
-  eleventyConfig.addNunjucksFilter("rssLastUpdatedDate", collection => {
-    return dateRfc3339(getNewestCollectionItemDate(collection));
+  // Removed, this name is incorrect! Issue #8, #21
+  eleventyConfig.addNunjucksFilter("rssLastUpdatedDate", () => {
+    throw new Error("The `rssLastUpdatedDate` filter was removed. Use `getNewestCollectionItemDate | dateToRfc3339` (for Atom) or `getNewestCollectionItemDate | dateToRfc822` (for RSS) instead.")
   });
 
-  // Deprecated, this name is incorrect! Issue #8
-  eleventyConfig.addNunjucksFilter("rssDate", dateRfc3339);
+  // Removed, this name is incorrect! Issue #8, #21
+  eleventyConfig.addNunjucksFilter("rssDate", () => {
+    throw new Error("The `rssDate` filter was removed. Use `dateToRfc3339` (for Atom) or `dateToRfc822` (for RSS) instead.");
+  });
 };
 
 module.exports.dateToRfc3339 = dateRfc3339;
