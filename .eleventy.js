@@ -1,19 +1,23 @@
 const pkg = require("./package.json");
 const dateRfc3339 = require("./src/dateRfc3339");
 const dateRfc822 = require("./src/dateRfc822");
+const getNewestCollectionItemDate = require("./src/getNewestCollectionItemDate");
+const virtualTemplate = require("./src/virtualTemplate.js");
+
 const absoluteUrl = require("./src/absoluteUrl");
 const convertHtmlToAbsoluteUrls = require("./src/htmlToAbsoluteUrls");
-const getNewestCollectionItemDate = require("./src/getNewestCollectionItemDate");
 
-module.exports = function(eleventyConfig, options = {}) {
+function eleventyRssPlugin(eleventyConfig, options = {}) {
   try {
     eleventyConfig.versionCheck(pkg["11ty"].compatibility);
   } catch(e) {
     console.log( `WARN: Eleventy Plugin (${pkg.name}) Compatibility: ${e.message}` );
   }
 
+  // Deprecated in favor of the HTML <base> plugin bundled with Eleventy 2.0
   eleventyConfig.addNunjucksFilter("absoluteUrl", absoluteUrl);
 
+  // Deprecated in favor of the HTML <base> plugin bundled with Eleventy 2.0
   eleventyConfig.addNunjucksAsyncFilter("htmlToAbsoluteUrls", (htmlContent, base, callback) => {
     if(!htmlContent) {
       callback(null, "");
@@ -46,6 +50,18 @@ module.exports = function(eleventyConfig, options = {}) {
   });
 };
 
+Object.defineProperty(eleventyRssPlugin, "eleventyPackage", {
+	value: pkg.name
+});
+
+Object.defineProperty(eleventyRssPlugin, "eleventyPluginOptions", {
+	value: {
+    unique: true
+  }
+});
+
+module.exports = eleventyRssPlugin;
+module.exports.feedPlugin = virtualTemplate;
 module.exports.dateToRfc3339 = dateRfc3339;
 module.exports.dateToRfc822 = dateRfc822;
 module.exports.getNewestCollectionItemDate = getNewestCollectionItemDate;

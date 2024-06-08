@@ -1,6 +1,7 @@
 const { URL } = require("url");
-const debug = require("debug")("EleventyPluginRSS");
+const debug = require("debug")("Eleventy:Rss");
 
+// This is deprecated! Use the Eleventy HTML <base> plugin instead (2.0+)
 module.exports = function(url, base) {
   try {
     return (new URL(url, base)).toString()

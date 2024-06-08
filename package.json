@@ -40,8 +40,9 @@
     "ava": "^4.3.0"
   },
   "dependencies": {
-    "debug": "^4.3.4",
-    "posthtml": "^0.16.6",
-    "posthtml-urls": "1.0.0"
+    "@11ty/eleventy-utils": "^1.0.3",
+    "@11ty/posthtml-urls": "1.0.0",
+    "debug": "^4.3.5",
+    "posthtml": "^0.16.6"
   }
 }
