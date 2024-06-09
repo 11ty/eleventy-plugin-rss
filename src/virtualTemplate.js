@@ -67,10 +67,12 @@ function getFeedContent(options) {
   "home_page_url": "{{ metadata.base | addPathPrefixToFullUrl }}",
   "feed_url": "{{ permalink | htmlBaseUrl(metadata.base) }}",
   "description": "{{ metadata.description }}",
-  "author": {
-    "name": "{{ metadata.author.name }}",
-    "url": "{{ metadata.author.url }}"
-  },
+  "authors": [
+    {
+      "name": "{{ metadata.author.name }}",
+      "url": "{{ metadata.author.url }}"
+    }
+  ],
   "items": [
     {%- for post in collections['${options.collectionName}'] | reverse | head(${options.limit}) %}
     {%- set absolutePostUrl %}{{ post.url | htmlBaseUrl(metadata.base) }}{% endset %}
