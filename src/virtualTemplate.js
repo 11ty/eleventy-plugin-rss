@@ -2,13 +2,13 @@ const pkg = require("../package.json");
 const { DeepCopy } = require("@11ty/eleventy-utils");
 const debug = require("debug")("Eleventy:Rss:Feed");
 
-function getFeedContent(type, { collectionName, limit }) {
+function getFeedContent(type, { stylesheet, collectionName, limit }) {
   // Note: page.lang comes from the i18n plugin: https://www.11ty.dev/docs/plugins/i18n/#page.lang
 
   if(type === "rss") {
     // Nunjucks template
     return `<?xml version="1.0" encoding="utf-8"?>
-${options.stylesheet ? `<?xml-stylesheet href="${options.stylesheet}" type="text/xsl"?>\n` : ""}<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xml:base="{{ metadata.base | addPathPrefixToFullUrl }}" xmlns:atom="http://www.w3.org/2005/Atom">
+${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xml:base="{{ metadata.base | addPathPrefixToFullUrl }}" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>{{ metadata.title }}</title>
     <link>{{ metadata.base | addPathPrefixToFullUrl }}</link>
@@ -33,7 +33,7 @@ ${options.stylesheet ? `<?xml-stylesheet href="${options.stylesheet}" type="text
   if(type === "atom") {
     // Nunjucks template
     return `<?xml version="1.0" encoding="utf-8"?>
-${options.stylesheet ? `<?xml-stylesheet href="${options.stylesheet}" type="text/xsl"?>\n` : ""}<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="{{ metadata.language or page.lang }}">
+${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="{{ metadata.language or page.lang }}">
   <title>{{ metadata.title }}</title>
   <subtitle>{{ metadata.subtitle }}</subtitle>
   <link href="{{ permalink | htmlBaseUrl(metadata.base) }}" rel="self" />
