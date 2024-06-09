@@ -1,6 +1,6 @@
 {
   "name": "@11ty/eleventy-plugin-rss",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "description": "A pack of Eleventy plugins for generating an RSS feed using the Nunjucks templating engine.",
   "publishConfig": {
     "access": "public"
