@@ -3,12 +3,13 @@ const { DeepCopy } = require("@11ty/eleventy-utils");
 const debug = require("debug")("Eleventy:Rss:Feed");
 
 function getFeedContent(type, { stylesheet, collectionName, limit }) {
+  let stylesheetUrl = stylesheet?.[type];
   // Note: page.lang comes from the i18n plugin: https://www.11ty.dev/docs/plugins/i18n/#page.lang
 
   if(type === "rss") {
     // Nunjucks template
     return `<?xml version="1.0" encoding="utf-8"?>
-${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xml:base="{{ metadata.base | addPathPrefixToFullUrl }}" xmlns:atom="http://www.w3.org/2005/Atom">
+${stylesheetUrl ? `<?xml-stylesheet href="${stylesheetUrl}" type="text/xsl"?>\n` : ""}<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xml:base="{{ metadata.base | addPathPrefixToFullUrl }}" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>{{ metadata.title }}</title>
     <link>{{ metadata.base | addPathPrefixToFullUrl }}</link>
@@ -33,7 +34,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
   if(type === "atom") {
     // Nunjucks template
     return `<?xml version="1.0" encoding="utf-8"?>
-${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="{{ metadata.language or page.lang }}">
+${stylesheetUrl ? `<?xml-stylesheet href="${stylesheetUrl}" type="text/xsl"?>\n` : ""}<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="{{ metadata.language or page.lang }}">
   <title>{{ metadata.title }}</title>
   <subtitle>{{ metadata.subtitle }}</subtitle>
   <link href="{{ permalink | htmlBaseUrl(metadata.base) }}" rel="self" />
@@ -107,10 +108,14 @@ async function eleventyFeedPlugin(eleventyConfig, options = {}) {
 
   options = DeepCopy({
     collectionName: false, // required
-    files: {
-      "atom": "/feed.xml"
-    },
     limit: 0, // limit number of entries, 0 means no limit
+    files: {
+      // rss and json also supported
+      atom: "/feed.xml",
+    },
+    templateData: {
+      // atom: {},
+    },
     metadata: {
       title: "Blog Title",
       subtitle: "This is a longer description about your blog.",
@@ -128,7 +133,7 @@ async function eleventyFeedPlugin(eleventyConfig, options = {}) {
   }
 
   let templateData = {
-    eleventyExcludeFromCollections: true,
+    eleventyExcludeFromCollections: [ options.collectionName ],
     eleventyImport: {
       collections: [ options.collectionName ],
     },
@@ -143,7 +148,7 @@ async function eleventyFeedPlugin(eleventyConfig, options = {}) {
         throw new Error("`limit` option must be a positive number.");
       }
       return array.slice(0, n);
-    }
+    },
   };
 
   for(let type in options.files) {
@@ -151,7 +156,7 @@ async function eleventyFeedPlugin(eleventyConfig, options = {}) {
     let inputPath;
     let outputPath;
 
-    if(Array.isArray(files) && files.length === 2) {
+    if(Array.isArray(files) && files.length >= 2) {
       [inputPath, outputPath] = files;
     } else if(typeof files === "string") {
       inputPath = getInputPath(type);
@@ -162,6 +167,7 @@ async function eleventyFeedPlugin(eleventyConfig, options = {}) {
 
     let data = {
       permalink: outputPath,
+      ...options?.templateData?.[type] || {},
       ...templateData,
     };
     eleventyConfig.addTemplate(inputPath, getFeedContent(type, options), data);
