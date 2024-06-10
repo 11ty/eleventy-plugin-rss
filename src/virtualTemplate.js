@@ -98,9 +98,11 @@ async function eleventyFeedPlugin(eleventyConfig, options = {}) {
   eleventyConfig.addPlugin(pluginRss, options.rssPluginOptions || {});
 
   // Guaranteed unique
-  let pluginHtmlBase = await eleventyConfig.resolvePlugin("@11ty/eleventy/html-base-plugin");
+  const pluginHtmlBase = await eleventyConfig.resolvePlugin("@11ty/eleventy/html-base-plugin");
   eleventyConfig.addPlugin(pluginHtmlBase, options.htmlBasePluginOptions || {});
 
+  let slugifyFilter = eleventyConfig.getFilter("slugify");
+  let inputPathSuffix = options?.metadata?.title ? `-${slugifyFilter(options?.metadata?.title)}` : "";
   options = DeepCopy({
     // rss and json also supported
     type: "atom",
@@ -109,7 +111,7 @@ async function eleventyFeedPlugin(eleventyConfig, options = {}) {
       limit: 0, // limit number of entries, 0 means no limit
     },
     outputPath: "/feed.xml",
-    inputPath: `virtual:eleventy-plugin-feed-${options.type || "atom"}.njk`, // TODO make this more unique
+    inputPath: `eleventy-plugin-feed${inputPathSuffix}-${options.type || "atom"}.njk`, // TODO make this more unique
     templateData: {},
     metadata: {
       title: "Blog Title",
