@@ -42,7 +42,9 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
   <id>{{ metadata.base | addPathPrefixToFullUrl }}</id>
   <author>
     <name>{{ metadata.author.name }}</name>
+    {%- if metadata.author.email %}
     <email>{{ metadata.author.email }}</email>
+    {%- endif %}
   </author>
   {%- for post in collections['${collection.name}'] | reverse | head(${collection.limit}) %}
   {%- set absolutePostUrl %}{{ post.url | htmlBaseUrl(metadata.base) }}{% endset %}
@@ -67,8 +69,9 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
   "description": "{{ metadata.description }}",
   "authors": [
     {
-      "name": "{{ metadata.author.name }}",
-      "url": "{{ metadata.author.url }}"
+      "name": "{{ metadata.author.name }}"{% if metadata.author.email %},
+      "url": "mailto:{{ metadata.author.email }}"
+      {%- endif %}
     }
   ],
   "items": [
@@ -91,18 +94,19 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
 }
 
 async function eleventyFeedPlugin(eleventyConfig, options = {}) {
-  eleventyConfig.versionCheck(">=3.0.0-alpha.11");
+  eleventyConfig.versionCheck(pkg["11ty"].compatibility);
 
-  // Guaranteed unique
+  // Guaranteed unique, first add wins
   const pluginRss = require("../.eleventy.js");
   eleventyConfig.addPlugin(pluginRss, options.rssPluginOptions || {});
 
-  // Guaranteed unique
+  // Guaranteed unique, first add wins
   const pluginHtmlBase = await eleventyConfig.resolvePlugin("@11ty/eleventy/html-base-plugin");
   eleventyConfig.addPlugin(pluginHtmlBase, options.htmlBasePluginOptions || {});
 
   let slugifyFilter = eleventyConfig.getFilter("slugify");
   let inputPathSuffix = options?.metadata?.title ? `-${slugifyFilter(options?.metadata?.title)}` : "";
+
   options = DeepCopy({
     // rss and json also supported
     type: "atom",
@@ -120,7 +124,7 @@ async function eleventyFeedPlugin(eleventyConfig, options = {}) {
       base: "https://example.com/",
       author: {
         name: "Your Name",
-        email: "me@example.com"
+        email: "", // Optional
       }
     }
   }, options);
