@@ -1,0 +1,36 @@
+---json
+{
+  "permalink": "rss.xml",
+  "eleventyExcludeFromCollections": true,
+  "metadata": {
+    "title": "My Blog about Boats",
+    "description": "I am writing about my experiences as a naval navel-gazer.",
+    "language": "en",
+    "base": "https://example.com/",
+    "author": {
+      "name": "Boaty McBoatFace"
+    }
+  }
+}
+---
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xml:base="{{ metadata.base | addPathPrefixToFullUrl }}" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{{ metadata.title }}</title>
+    <link>{{ metadata.base | addPathPrefixToFullUrl }}</link>
+    <atom:link href="{{ permalink | htmlBaseUrl(metadata.base) }}" rel="self" type="application/rss+xml" />
+    <description>{{ metadata.description }}</description>
+    <language>{{ metadata.language or page.lang }}</language>
+    {%- for post in collections.posts | reverse %}
+    {%- set absolutePostUrl = post.url | htmlBaseUrl(metadata.base) %}
+    <item>
+      <title>{{ post.data.title }}</title>
+      <link>{{ absolutePostUrl }}</link>
+      <description>{{ post.content | renderTransforms(post.data.page, metadata.base) }}</description>
+      <pubDate>{{ post.date | dateToRfc822 }}</pubDate>
+      <dc:creator>{{ metadata.author.name }}</dc:creator>
+      <guid>{{ absolutePostUrl }}</guid>
+    </item>
+    {%- endfor %}
+  </channel>
+</rss>

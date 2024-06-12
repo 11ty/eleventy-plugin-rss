@@ -8,7 +8,7 @@
   "main": ".eleventy.js",
   "scripts": {
     "test": "npx ava",
-    "sample": "cd sample && npx @11ty/eleventy --config=config-sample.js",
+    "sample": "cd sample && npx @11ty/eleventy --config=config-sample.js --pathprefix=pathprefix",
     "clean": "rm -rf sample/_site"
   },
   "repository": {
@@ -34,7 +34,7 @@
   },
   "homepage": "https://www.11ty.dev/docs/plugins/rss/",
   "11ty": {
-    "compatibility": ">=2.0.0"
+    "compatibility": ">=3.0.0-alpha.13"
   },
   "devDependencies": {
     "ava": "^4.3.0"

@@ -1,0 +1,37 @@
+---json
+{
+  "permalink": "atom.xml",
+  "eleventyExcludeFromCollections": true,
+  "metadata": {
+    "title": "My Blog about Boats",
+    "description": "I am writing about my experiences as a naval navel-gazer.",
+    "language": "en",
+    "base": "https://example.com/",
+    "author": {
+      "name": "Boaty McBoatFace"
+    }
+  }
+}
+---
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="{{ metadata.language or page.lang }}">
+  <title>{{ metadata.title }}</title>
+  <subtitle>{{ metadata.description }}</subtitle>
+  <link href="{{ permalink | htmlBaseUrl(metadata.base) }}" rel="self" />
+  <link href="{{ metadata.base | addPathPrefixToFullUrl }}" />
+  <updated>{{ collections.posts | getNewestCollectionItemDate | dateToRfc3339 }}</updated>
+  <id>{{ metadata.base | addPathPrefixToFullUrl }}</id>
+  <author>
+    <name>{{ metadata.author.name }}</name>
+  </author>
+  {%- for post in collections.posts | reverse %}
+  {%- set absolutePostUrl %}{{ post.url | htmlBaseUrl(metadata.base) }}{% endset %}
+  <entry>
+    <title>{{ post.data.title }}</title>
+    <link href="{{ absolutePostUrl }}" />
+    <updated>{{ post.date | dateToRfc3339 }}</updated>
+    <id>{{ absolutePostUrl }}</id>
+    <content type="html">{{ post.content | renderTransforms(post.data.page, metadata.base) }}</content>
+  </entry>
+  {%- endfor %}
+</feed>

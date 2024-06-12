@@ -7,17 +7,22 @@ const virtualTemplate = require("./src/virtualTemplate.js");
 const absoluteUrl = require("./src/absoluteUrl");
 const convertHtmlToAbsoluteUrls = require("./src/htmlToAbsoluteUrls");
 
-function eleventyRssPlugin(eleventyConfig, options = {}) {
-  try {
-    eleventyConfig.versionCheck(pkg["11ty"].compatibility);
-  } catch(e) {
-    console.log( `WARN: Eleventy Plugin (${pkg.name}) Compatibility: ${e.message}` );
-  }
+async function eleventyRssPlugin(eleventyConfig, options = {}) {
+  eleventyConfig.versionCheck(pkg["11ty"].compatibility);
 
-  // Deprecated in favor of the HTML <base> plugin bundled with Eleventy 2.0
+  // Guaranteed unique, first add wins
+  const pluginHtmlBase = await eleventyConfig.resolvePlugin("@11ty/eleventy/html-base-plugin");
+  eleventyConfig.addPlugin(pluginHtmlBase, options.htmlBasePluginOptions || {});
+
+  // Dates
+  eleventyConfig.addNunjucksFilter("getNewestCollectionItemDate", getNewestCollectionItemDate);
+  eleventyConfig.addNunjucksFilter("dateToRfc3339", dateRfc3339);
+  eleventyConfig.addNunjucksFilter("dateToRfc822", dateRfc822);
+
+  // Deprecated in favor of the more efficient HTML <base> plugin bundled with Eleventy
   eleventyConfig.addNunjucksFilter("absoluteUrl", absoluteUrl);
 
-  // Deprecated in favor of the HTML <base> plugin bundled with Eleventy 2.0
+  // Deprecated in favor of the more efficient HTML <base> plugin bundled with Eleventy
   eleventyConfig.addNunjucksAsyncFilter("htmlToAbsoluteUrls", (htmlContent, base, callback) => {
     if(!htmlContent) {
       callback(null, "");
@@ -34,17 +39,10 @@ function eleventyRssPlugin(eleventyConfig, options = {}) {
     });
   });
 
-  // Dates
-  eleventyConfig.addNunjucksFilter("getNewestCollectionItemDate", getNewestCollectionItemDate);
-  eleventyConfig.addNunjucksFilter("dateToRfc3339", dateRfc3339);
-  eleventyConfig.addNunjucksFilter("dateToRfc822", dateRfc822);
-
-  // Removed, this name is incorrect! Issue #8, #21
+  // These are removed, their names are incorrect! Issue #8, #21
   eleventyConfig.addNunjucksFilter("rssLastUpdatedDate", () => {
     throw new Error("The `rssLastUpdatedDate` filter was removed. Use `getNewestCollectionItemDate | dateToRfc3339` (for Atom) or `getNewestCollectionItemDate | dateToRfc822` (for RSS) instead.")
   });
-
-  // Removed, this name is incorrect! Issue #8, #21
   eleventyConfig.addNunjucksFilter("rssDate", () => {
     throw new Error("The `rssDate` filter was removed. Use `dateToRfc3339` (for Atom) or `dateToRfc822` (for RSS) instead.");
   });
