@@ -142,17 +142,18 @@ async function eleventyFeedPlugin(eleventyConfig, options = {}) {
     },
     layout: false,
     metadata: options.metadata,
-    // Get the first `n` elements of a collection.
-    head: function(array, n) {
-      if(!n || n === 0) {
-        return array;
-      }
-      if(n < 0) {
-        throw new Error("`collection.limit` option must be a positive number.");
-      }
-      return array.slice(0, n);
-    },
   };
+
+  // Get the first `n` elements of a collection.
+  eleventyConfig.addFilter('head', function(array, n) {
+    if(!n || n === 0) {
+      return array;
+    }
+    if(n < 0) {
+      throw new Error("`collection.limit` option must be a positive number.");
+    }
+    return array.slice(0, n);
+  });
 
   eleventyConfig.addTemplate(options.inputPath, getFeedContent(options), templateData);
 };
