@@ -133,13 +133,23 @@ async function eleventyFeedPlugin(eleventyConfig, options = {}) {
     throw new Error("Missing `collection.name` option in feedPlugin from @11ty/eleventy-plugin-rss.");
   }
 
+  let eleventyExcludeFromCollections;
+  let eleventyImport;
+  if(options.collection.name === "all") {
+    eleventyExcludeFromCollections = true;
+    eleventyImport = {};
+  } else {
+    eleventyExcludeFromCollections = [ options.collection.name ]
+    eleventyImport = {
+      collections: [ options.collection.name ],
+    };
+  }
+
   let templateData = {
     ...options?.templateData || {},
     permalink: options.outputPath,
-    eleventyExcludeFromCollections: [ options.collection.name ],
-    eleventyImport: {
-      collections: [ options.collection.name ],
-    },
+    eleventyExcludeFromCollections,
+    eleventyImport,
     layout: false,
     metadata: options.metadata,
   };
