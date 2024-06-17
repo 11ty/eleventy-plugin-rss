@@ -15,7 +15,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     <atom:link href="{{ permalink | htmlBaseUrl(metadata.base) }}" rel="self" type="application/rss+xml" />
     <description>{{ metadata.subtitle }}</description>
     <language>{{ metadata.language or page.lang }}</language>
-    {%- for post in collections.${collection.name} | reverse | head(${collection.limit}) %}
+    {%- for post in collections.${collection.name} | reverse | eleventyFeedHead(${collection.limit}) %}
     {%- set absolutePostUrl = post.url | htmlBaseUrl(metadata.base) %}
     <item>
       <title>{{ post.data.title }}</title>
@@ -46,7 +46,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     <email>{{ metadata.author.email }}</email>
     {%- endif %}
   </author>
-  {%- for post in collections['${collection.name}'] | reverse | head(${collection.limit}) %}
+  {%- for post in collections['${collection.name}'] | reverse | eleventyFeedHead(${collection.limit}) %}
   {%- set absolutePostUrl %}{{ post.url | htmlBaseUrl(metadata.base) }}{% endset %}
   <entry>
     <title>{{ post.data.title }}</title>
@@ -75,7 +75,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     }
   ],
   "items": [
-    {%- for post in collections['${collection.name}'] | reverse | head(${collection.limit}) %}
+    {%- for post in collections['${collection.name}'] | reverse | eleventyFeedHead(${collection.limit}) %}
     {%- set absolutePostUrl %}{{ post.url | htmlBaseUrl(metadata.base) }}{% endset %}
     {
       "id": "{{ absolutePostUrl }}",
@@ -145,12 +145,12 @@ async function eleventyFeedPlugin(eleventyConfig, options = {}) {
   };
 
   // Get the first `n` elements of a collection.
-  eleventyConfig.addFilter('head', function(array, n) {
+  eleventyConfig.addFilter("eleventyFeedHead", function(array, n) {
     if(!n || n === 0) {
       return array;
     }
     if(n < 0) {
-      throw new Error("`collection.limit` option must be a positive number.");
+      return array.slice(n);
     }
     return array.slice(0, n);
   });
