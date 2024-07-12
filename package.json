@@ -37,6 +37,7 @@
     "compatibility": ">=3.0.0-alpha.15"
   },
   "devDependencies": {
+    "@11ty/eleventy": "3.0.0-alpha.16",
     "ava": "^4.3.0"
   },
   "dependencies": {
