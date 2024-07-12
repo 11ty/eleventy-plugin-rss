@@ -1,4 +1,4 @@
-const rssPlugin = require("../")
+const rssPlugin = require("../");
 
 module.exports = function(eleventyConfig) {
   // eleventyConfig.ignores.add("json.njk");

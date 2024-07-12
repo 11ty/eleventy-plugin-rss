@@ -1,8 +1,8 @@
 {
-  "name": "sample",
+  "name": "test",
   "version": "1.0.0",
   "description": "",
-  "main": "config-sample.js",
+  "main": "dateToRfc3339Test.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

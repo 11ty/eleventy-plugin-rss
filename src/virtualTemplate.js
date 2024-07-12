@@ -1,5 +1,8 @@
 const pkg = require("../package.json");
 const { DeepCopy } = require("@11ty/eleventy-utils");
+
+const rssPlugin = require("./rssPlugin.js");
+
 const debug = require("debug")("Eleventy:Rss:Feed");
 
 function getFeedContent({ type, stylesheet, collection }) {
@@ -93,16 +96,15 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
   throw new Error("Missing or invalid feed type. Received: " + type);
 }
 
-async function eleventyFeedPlugin(eleventyConfig, options = {}) {
+function eleventyFeedPlugin(eleventyConfig, options = {}) {
   eleventyConfig.versionCheck(pkg["11ty"].compatibility);
 
   // Guaranteed unique, first add wins
-  const pluginRss = require("../.eleventy.js");
-  eleventyConfig.addPlugin(pluginRss, options.rssPluginOptions || {});
+  const pluginHtmlBase = eleventyConfig.resolvePlugin("@11ty/eleventy/html-base-plugin");
+  eleventyConfig.addPlugin(pluginHtmlBase, options.htmlBasePluginOptions || {});
 
   // Guaranteed unique, first add wins
-  const pluginHtmlBase = await eleventyConfig.resolvePlugin("@11ty/eleventy/html-base-plugin");
-  eleventyConfig.addPlugin(pluginHtmlBase, options.htmlBasePluginOptions || {});
+  eleventyConfig.addPlugin(rssPlugin, options.rssPluginOptions || {});
 
   let slugifyFilter = eleventyConfig.getFilter("slugify");
   let inputPathSuffix = options?.metadata?.title ? `-${slugifyFilter(options?.metadata?.title)}` : "";
@@ -167,7 +169,6 @@ async function eleventyFeedPlugin(eleventyConfig, options = {}) {
 
   eleventyConfig.addTemplate(options.inputPath, getFeedContent(options), templateData);
 };
-
 
 Object.defineProperty(eleventyFeedPlugin, "eleventyPackage", {
   value: `${pkg.name}/feed-plugin`
