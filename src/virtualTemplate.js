@@ -18,7 +18,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     <atom:link href="{{ permalink | htmlBaseUrl(metadata.base) }}" rel="self" type="application/rss+xml" />
     <description>{{ metadata.subtitle }}</description>
     <language>{{ metadata.language or page.lang }}</language>
-    {%- for post in collections.${collection.name} | reverse | eleventyFeedHead(${collection.limit}) %}
+    {%- for post in collections.${collection.name} | eleventyFeedActive | reverse | eleventyFeedHead(${collection.limit}) %}
     {%- set absolutePostUrl = post.url | htmlBaseUrl(metadata.base) %}
     <item>
       <title>{{ post.data.title }}</title>
@@ -49,7 +49,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     <email>{{ metadata.author.email }}</email>
     {%- endif %}
   </author>
-  {%- for post in collections['${collection.name}'] | reverse | eleventyFeedHead(${collection.limit}) %}
+  {%- for post in collections['${collection.name}'] | eleventyFeedActive | reverse | eleventyFeedHead(${collection.limit}) %}
   {%- set absolutePostUrl %}{{ post.url | htmlBaseUrl(metadata.base) }}{% endset %}
   <entry>
     <title>{{ post.data.title }}</title>
@@ -78,7 +78,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     }
   ],
   "items": [
-    {%- for post in collections['${collection.name}'] | reverse | eleventyFeedHead(${collection.limit}) %}
+    {%- for post in collections['${collection.name}'] | eleventyFeedActive | reverse | eleventyFeedHead(${collection.limit}) %}
     {%- set absolutePostUrl %}{{ post.url | htmlBaseUrl(metadata.base) }}{% endset %}
     {
       "id": "{{ absolutePostUrl }}",
@@ -106,6 +106,31 @@ function eleventyFeedPlugin(eleventyConfig, options = {}) {
   // Guaranteed unique, first add wins
   eleventyConfig.addPlugin(rssPlugin, options.rssPluginOptions || {});
 
+  // Get the first `n` elements of a collection.
+  eleventyConfig.addFilter("eleventyFeedHead", function(array, n) {
+    if(!n || n === 0) {
+      return array;
+    }
+    if(n < 0) {
+      return array.slice(n);
+    }
+    return array.slice(0, n);
+  });
+
+  eleventyConfig.addFilter('eleventyFeedActive', function(items) {
+    return items.filter(item => item.url)
+  })
+
+  if (!Array.isArray(options.feeds)) {
+    options.feeds = [options]
+  }
+
+  for (const feed of options.feeds) {
+    addTemplate(eleventyConfig, feed)
+  }
+}
+
+function addTemplate(eleventyConfig, options = {}) {
   let slugifyFilter = eleventyConfig.getFilter("slugify");
   let inputPathSuffix = options?.metadata?.title ? `-${slugifyFilter(options?.metadata?.title)}` : "";
 
@@ -155,17 +180,6 @@ function eleventyFeedPlugin(eleventyConfig, options = {}) {
     layout: false,
     metadata: options.metadata,
   };
-
-  // Get the first `n` elements of a collection.
-  eleventyConfig.addFilter("eleventyFeedHead", function(array, n) {
-    if(!n || n === 0) {
-      return array;
-    }
-    if(n < 0) {
-      return array.slice(n);
-    }
-    return array.slice(0, n);
-  });
 
   eleventyConfig.addTemplate(options.inputPath, getFeedContent(options), templateData);
 };
