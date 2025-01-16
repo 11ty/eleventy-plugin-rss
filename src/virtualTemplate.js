@@ -134,6 +134,9 @@ function eleventyFeedPlugin(eleventyConfig, options = {}) {
   if(!options.collection?.name) {
     throw new Error("Missing `collection.name` option in feedPlugin from @11ty/eleventy-plugin-rss.");
   }
+  if(typeof options.collection?.name !== "string") {
+    throw new Error("Only string is supported in `collection.name` option in feedPlugin from @11ty/eleventy-plugin-rss. Received: " + typeof options.collection?.name);
+  }
 
   let eleventyExcludeFromCollections;
   let eleventyImport;
