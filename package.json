@@ -37,13 +37,13 @@
     "compatibility": ">=3.0.0-alpha.15"
   },
   "devDependencies": {
-    "@11ty/eleventy": "3.0.0-alpha.16",
-    "ava": "^4.3.0"
+    "@11ty/eleventy": "3.0.0",
+    "ava": "^6.2.0"
   },
   "dependencies": {
-    "@11ty/eleventy-utils": "^1.0.3",
-    "@11ty/posthtml-urls": "1.0.0",
-    "debug": "^4.3.5",
+    "@11ty/eleventy-utils": "^2.0.0",
+    "@11ty/posthtml-urls": "^1.0.1",
+    "debug": "^4.4.0",
     "posthtml": "^0.16.6"
   }
 }
