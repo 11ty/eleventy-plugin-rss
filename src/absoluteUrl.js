@@ -1,4 +1,3 @@
-const { URL } = require("url");
 const debug = require("debug")("Eleventy:Rss");
 
 // This is deprecated! Use the Eleventy HTML <base> plugin instead (2.0+)
