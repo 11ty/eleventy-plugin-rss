@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@11ty/eleventy": "3.0.0",
-    "ava": "^6.2.0"
+    "ava": "^6.3.0"
   },
   "dependencies": {
     "@11ty/eleventy-utils": "^2.0.0",
