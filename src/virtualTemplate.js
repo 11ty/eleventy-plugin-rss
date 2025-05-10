@@ -43,6 +43,12 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
   <link href="{{ metadata.base | addPathPrefixToFullUrl }}" />
   <updated>{{ collections['${collection.name}'] | getNewestCollectionItemDate | dateToRfc3339 }}</updated>
   <id>{{ metadata.base | addPathPrefixToFullUrl }}</id>
+  {%- if metadata.icon %}
+  <icon>{{ metadata.icon }}</icon>
+  {%- endif %}
+  {%- if metadata.logo %}
+  <icon>{{ metadata.logo }}</icon>
+  {%- endif %}
   <author>
     <name>{{ metadata.author.name }}</name>
     {%- if metadata.author.email %}
