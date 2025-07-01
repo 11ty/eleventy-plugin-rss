@@ -1,9 +1,11 @@
-const pkg = require("../package.json");
-const { DeepCopy } = require("@11ty/eleventy-utils");
+import debugUtil from "debug";
+import pkg from "../package.json" with {type: "json"};
 
-const rssPlugin = require("./rssPlugin.js");
+import { DeepCopy } from "@11ty/eleventy-utils";
 
-const debug = require("debug")("Eleventy:Rss:Feed");
+import rssPlugin from "./rssPlugin.js";
+
+const debug = debugUtil("Eleventy:Rss:Feed");
 
 function getFeedContent({ type, stylesheet, collection }) {
   // Note: page.lang comes from the i18n plugin: https://www.11ty.dev/docs/plugins/i18n/#page.lang
@@ -96,7 +98,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
   throw new Error("Missing or invalid feed type. Received: " + type);
 }
 
-function eleventyFeedPlugin(eleventyConfig, options = {}) {
+export default function eleventyFeedPlugin(eleventyConfig, options = {}) {
   eleventyConfig.versionCheck(pkg["11ty"].compatibility);
 
   // Guaranteed unique, first add wins
@@ -183,5 +185,3 @@ Object.defineProperty(eleventyFeedPlugin, "eleventyPluginOptions", {
     unique: false
   }
 });
-
-module.exports = eleventyFeedPlugin;
