@@ -1,5 +1,5 @@
-const test = require("ava");
-const { feedPlugin } = require("../");
+import test from "ava";
+import { feedPlugin } from "../.eleventy.js";
 
 // https://github.com/11ty/eleventy-plugin-rss/issues/50
 test("RSS virtual templates plugin", async (t) => {

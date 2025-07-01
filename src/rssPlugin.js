@@ -1,14 +1,14 @@
-const pkg = require("../package.json");
+import pkg from "../package.json" with {type: "json"};
 
-const dateRfc3339 = require("./dateRfc3339.js");
-const dateRfc822 = require("./dateRfc822.js");
-const getNewestCollectionItemDate = require("./getNewestCollectionItemDate.js");
+import dateRfc3339 from "./dateRfc3339.js";
+import dateRfc822 from "./dateRfc822.js";
+import getNewestCollectionItemDate from "./getNewestCollectionItemDate.js";
 
-const absoluteUrl = require("./absoluteUrl.js");
-const convertHtmlToAbsoluteUrls = require("./htmlToAbsoluteUrls.js");
+import absoluteUrl from "./absoluteUrl.js";
+import convertHtmlToAbsoluteUrls from "./htmlToAbsoluteUrls.js";
 
 
-function eleventyRssPlugin(eleventyConfig, options = {}) {
+export default function eleventyRssPlugin(eleventyConfig, options = {}) {
   eleventyConfig.versionCheck(pkg["11ty"].compatibility);
 
   // Guaranteed unique, first add wins
@@ -58,5 +58,3 @@ Object.defineProperty(eleventyRssPlugin, "eleventyPluginOptions", {
     unique: true
   }
 });
-
-module.exports = eleventyRssPlugin;
