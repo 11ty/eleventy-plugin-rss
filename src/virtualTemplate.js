@@ -25,7 +25,12 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     <item>
       <title>{{ post.data.title }}</title>
       <link>{{ absolutePostUrl }}</link>
+      {%- if (post.data.description) -%}
+      <description>{{ post.data.description }}</description>
+      <content:encoded>{{ post.content | renderTransforms(post.data.page, metadata.base) }}</content:encoded>
+      {%- else -%}
       <description>{{ post.content | renderTransforms(post.data.page, metadata.base) }}</description>
+      {%- endif -%}
       <pubDate>{{ post.date | dateToRfc822 }}</pubDate>
       <dc:creator>{{ metadata.author.name }}</dc:creator>
       <guid>{{ absolutePostUrl }}</guid>
@@ -58,6 +63,9 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     <link href="{{ absolutePostUrl }}" />
     <updated>{{ post.date | dateToRfc3339 }}</updated>
     <id>{{ absolutePostUrl }}</id>
+    {%- if post.data.description %}
+    <summary>{{ post.data.description }}</summary>
+    {%- endif %}
     <content type="html">{{ post.content | renderTransforms(post.data.page, metadata.base) }}</content>
   </entry>
   {%- endfor %}
