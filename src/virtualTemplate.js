@@ -20,6 +20,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     <atom:link href="{{ permalink | htmlBaseUrl(metadata.base) }}" rel="self" type="application/rss+xml" />
     <description>{{ metadata.subtitle }}</description>
     <language>{{ metadata.language or page.lang }}</language>
+    {%- if metadata.icon %}<image>{{ metadata.icon }}</image>{%- endif %}
     {%- for post in collections.${collection.name} | reverse | eleventyFeedHead(${collection.limit}) %}
     {%- set absolutePostUrl = post.url | htmlBaseUrl(metadata.base) %}
     <item>
@@ -45,6 +46,12 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
   <link href="{{ metadata.base | addPathPrefixToFullUrl }}" />
   <updated>{{ collections['${collection.name}'] | getNewestCollectionItemDate | dateToRfc3339 }}</updated>
   <id>{{ metadata.base | addPathPrefixToFullUrl }}</id>
+  {%- if metadata.icon %}
+  <icon>{{ metadata.icon }}</icon>
+  {%- endif %}
+  {%- if metadata.logo %}
+  <icon>{{ metadata.logo }}</icon>
+  {%- endif %}
   <author>
     <name>{{ metadata.author.name }}</name>
     {%- if metadata.author.email %}
