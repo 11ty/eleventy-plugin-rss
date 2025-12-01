@@ -1,4 +1,4 @@
-module.exports = function(collection, emptyFallbackDate) {
+export default function(collection, emptyFallbackDate) {
   if( !collection || !collection.length ) {
     return emptyFallbackDate || new Date();
   }

@@ -1,7 +1,8 @@
-const debug = require("debug")("Eleventy:Rss");
+import debugUtil from "debug";
+const debug = debugUtil("Eleventy:Rss");
 
 // This is deprecated! Use the Eleventy HTML <base> plugin instead (2.0+)
-module.exports = function(url, base) {
+export default function(url, base) {
   try {
     return (new URL(url, base)).toString()
   } catch(e) {

@@ -1,5 +1,5 @@
-const test = require("ava");
-const dateRfc822 = require("../src/dateRfc822.js");
+import test from "ava";
+import dateRfc822 from "../src/dateRfc822.js";
 
 // RFC-822 date format
 // <pubDate>Wed, 02 Oct 2002 08:00:00 EST</pubDate>

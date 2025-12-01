@@ -1,6 +1,6 @@
-const rssPlugin = require("../");
+module.exports = async function(eleventyConfig) {
+  const { default: rssPlugin } = await import("../.eleventy.js");
 
-module.exports = function(eleventyConfig) {
   // eleventyConfig.ignores.add("json.njk");
   // eleventyConfig.ignores.add("atom.njk");
   // eleventyConfig.ignores.add("rss.njk");

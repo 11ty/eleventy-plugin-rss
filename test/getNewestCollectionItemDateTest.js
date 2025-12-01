@@ -1,5 +1,5 @@
-const test = require("ava");
-const getNewestCollectionItemDate = require("../src/getNewestCollectionItemDate");
+import test from "ava";
+import getNewestCollectionItemDate from "../src/getNewestCollectionItemDate.js";
 
 test("getNewestCollectionItemDate", t => {
   let first = new Date(2018, 1, 1);

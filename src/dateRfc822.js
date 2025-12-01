@@ -1,4 +1,4 @@
-module.exports = function pubDateRFC822(value, timeZone = undefined) {
+export default function pubDateRFC822(value, timeZone = undefined) {
   const date = new Date(value);
   const options = {
     weekday: 'short',
