@@ -7,7 +7,7 @@ import rssPlugin from "./rssPlugin.js";
 
 const debug = debugUtil("Eleventy:Rss:Feed");
 
-function getFeedContent({ type, stylesheet, collection }) {
+function getFeedContent({ type, stylesheet, collection, script }) {
   // Note: page.lang comes from the i18n plugin: https://www.11ty.dev/docs/plugins/i18n/#page.lang
 
   if(type === "rss") {
@@ -15,6 +15,7 @@ function getFeedContent({ type, stylesheet, collection }) {
     return `<?xml version="1.0" encoding="utf-8"?>
 ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xml:base="{{ metadata.base | addPathPrefixToFullUrl }}" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
+    ${script ? `<script src="${script}" xmlns="http://www.w3.org/1999/xhtml"></script>` : ""}
     <title>{{ metadata.title }}</title>
     <link>{{ metadata.base | addPathPrefixToFullUrl }}</link>
     <atom:link href="{{ permalink | htmlBaseUrl(metadata.base) }}" rel="self" type="application/rss+xml" />
@@ -39,6 +40,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     // Nunjucks template
     return `<?xml version="1.0" encoding="utf-8"?>
 ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="{{ metadata.language or page.lang }}">
+  ${script ? `<script src="${script}" xmlns="http://www.w3.org/1999/xhtml"></script>` : ""}
   <title>{{ metadata.title }}</title>
   <subtitle>{{ metadata.subtitle }}</subtitle>
   <link href="{{ permalink | htmlBaseUrl(metadata.base) }}" rel="self" />
