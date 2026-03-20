@@ -2,7 +2,7 @@
   "name": "@11ty/eleventy-plugin-rss",
   "version": "3.0.0",
   "type": "module",
-  "description": "Generate an Atom, RSS, or JSON feed with Eleventy.",
+  "description": "Generate an Atom, RSS, or JSON feed.",
   "publishConfig": {
     "access": "public"
   },
