@@ -57,7 +57,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
   <icon>{{ metadata.icon }}</icon>
   {%- endif %}
   {%- if metadata.logo %}
-  <icon>{{ metadata.logo }}</icon>
+  <logo>{{ metadata.logo }}</logo>
   {%- endif %}
   <author>
     <name>{{ metadata.author.name }}</name>
