@@ -50,3 +50,29 @@ test("RSS virtual templates plugin with `all`", async (t) => {
 	let [ feed ] = results.filter(entry => entry.outputPath.endsWith(".xml"));
 	t.truthy(feed.content.startsWith(`<?xml version="1.0" encoding="utf-8"?>`));
 });
+
+test("RSS virtual templates plugin with hyphenated collection name", async (t) => {
+	const { default: Eleventy } = await import("@11ty/eleventy");
+
+	let elev = new Eleventy("./test", "./test/_site", {
+		config: function (eleventyConfig) {
+			eleventyConfig.addTemplate("virtual.md", `# Hello`, { title: "Post Title", tags: ["posts-newest"] })
+
+			eleventyConfig.addPlugin(feedPlugin, {
+				type: "rss", // or "atom", "json"
+				outputPath: "/feed.xml",
+				collection: {
+					name: "posts-newest", // iterate over `collections.posts-newest`
+					limit: 10,            // 0 means no limit
+				},
+			});
+		},
+	});
+
+	let results = await elev.toJSON();
+
+	t.deepEqual(results.length, 2);
+	let [ feed ] = results.filter(entry => entry.outputPath.endsWith(".xml"));
+	t.truthy(feed.content.startsWith(`<?xml version="1.0" encoding="utf-8"?>`));
+	t.true(feed.content.includes("<title>Post Title</title>"));
+});

@@ -22,7 +22,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     <description>{{ metadata.subtitle }}</description>
     <language>{{ metadata.language or page.lang }}</language>
     {%- if metadata.icon %}<image>{{ metadata.icon }}</image>{%- endif %}
-    {%- for post in collections.${collection.name} | reverse | eleventyFeedHead(${collection.limit}) %}
+    {%- for post in collections['${collection.name}'] | reverse | eleventyFeedHead(${collection.limit}) %}
     {%- set absolutePostUrl = post.url | htmlBaseUrl(metadata.base) %}
     <item>
       <title>{{ post.data.title }}</title>
