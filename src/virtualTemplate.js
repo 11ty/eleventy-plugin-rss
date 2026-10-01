@@ -25,7 +25,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     <description>{{ metadata.subtitle }}</description>
     <language>{{ metadata.language or page.lang }}</language>
     {%- if metadata.icon %}<image>{{ metadata.icon }}</image>{%- endif %}
-    {%- for post in collections.${collection.name}${sort} | eleventyFeedHead(${collection.limit}) %}
+    {%- for post in collections.${collection.name} | eleventyFeedHasUrl${sort} | eleventyFeedHead(${collection.limit}) %}
     {%- set absolutePostUrl = post.url | htmlBaseUrl(metadata.base) %}
     <item>
       <title>{{ post.data.title }}</title>
@@ -54,7 +54,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
   <subtitle>{{ metadata.subtitle }}</subtitle>
   <link href="{{ permalink | htmlBaseUrl(metadata.base) }}" rel="self" />
   <link href="{{ metadata.base | addPathPrefixToFullUrl }}" />
-  <updated>{{ collections['${collection.name}'] | getNewestCollectionItemDate | dateToRfc3339 }}</updated>
+  <updated>{{ collections['${collection.name}'] | eleventyFeedHasUrl | getNewestCollectionItemDate | dateToRfc3339 }}</updated>
   <id>{{ metadata.base | addPathPrefixToFullUrl }}</id>
   {%- if metadata.icon %}
   <icon>{{ metadata.icon }}</icon>
@@ -68,7 +68,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     <email>{{ metadata.author.email }}</email>
     {%- endif %}
   </author>
-  {%- for post in collections['${collection.name}']${sort} | eleventyFeedHead(${collection.limit}) %}
+  {%- for post in collections['${collection.name}'] | eleventyFeedHasUrl${sort} | eleventyFeedHead(${collection.limit}) %}
   {%- set absolutePostUrl %}{{ post.url | htmlBaseUrl(metadata.base) }}{% endset %}
   <entry>
     <title>{{ post.data.title }}</title>
@@ -100,7 +100,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     }
   ],
   "items": [
-    {%- for post in collections['${collection.name}']${sort} | eleventyFeedHead(${collection.limit}) %}
+    {%- for post in collections['${collection.name}'] | eleventyFeedHasUrl${sort} | eleventyFeedHead(${collection.limit}) %}
     {%- set absolutePostUrl %}{{ post.url | htmlBaseUrl(metadata.base) }}{% endset %}
     {
       "id": "{{ absolutePostUrl }}",
@@ -185,6 +185,11 @@ export default function eleventyFeedPlugin(eleventyConfig, options = {}) {
     layout: false,
     metadata: options.metadata,
   };
+
+  // Skip entries without a URL (e.g. `permalink: false`), see #66
+  eleventyConfig.addFilter("eleventyFeedHasUrl", function(array) {
+    return array.filter(entry => entry.url);
+  });
 
   // Sort a copy of a collection by date.
   eleventyConfig.addFilter("eleventyFeedSortByDate", function(array, direction) {

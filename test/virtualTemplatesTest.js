@@ -133,3 +133,31 @@ test("Invalid `collection.sort` throws", async (t) => {
 	let error = await t.throwsAsync(() => getFeedTitles({ sort: "newest" }));
 	t.regex(error.originalError.message, /collection\.sort/);
 });
+
+// https://github.com/11ty/plugin-rss/issues/66
+for(let type of ["rss", "atom", "json"]) {
+	test(`${type} feed skips entries with \`permalink: false\``, async (t) => {
+		const { default: Eleventy } = await import("@11ty/eleventy");
+
+		let elev = new Eleventy("./test", "./test/_site", {
+			config: function (eleventyConfig) {
+				eleventyConfig.addTemplate("post1.md", `# Hello`, { title: "Post 1", tags: ["posts"] });
+				eleventyConfig.addTemplate("post2.md", `# Hello`, { title: "Post 2", tags: ["posts"], permalink: false });
+
+				eleventyConfig.addPlugin(feedPlugin, {
+					type,
+					outputPath: "/feed.txt",
+					collection: {
+						name: "posts",
+						limit: 1,
+					},
+				});
+			},
+		});
+
+		let results = await elev.toJSON();
+		let [ feed ] = results.filter(entry => entry.outputPath && entry.outputPath.endsWith(".txt"));
+		t.true(feed.content.includes("Post 1"));
+		t.false(feed.content.includes("Post 2"));
+	});
+}
