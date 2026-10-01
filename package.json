@@ -30,9 +30,6 @@
     "url": "https://zachleat.com/"
   },
   "license": "MIT",
-  "engines": {
-    "node": ">=22.12"
-  },
   "bugs": {
     "url": "https://github.com/11ty/plugin-rss/issues"
   },
