@@ -1,14 +1,17 @@
-import debugUtil from "debug";
+// import { createDebug } from "obug";
 import pkg from "../package.json" with {type: "json"};
 
 import { DeepCopy } from "@11ty/eleventy-utils";
 
 import rssPlugin from "./rssPlugin.js";
 
-const debug = debugUtil("Eleventy:Rss:Feed");
+// const debug = createDebug("Eleventy:Rss:Feed");
 
 function getFeedContent({ type, stylesheet, collection, script }) {
   // Note: page.lang comes from the i18n plugin: https://www.11ty.dev/docs/plugins/i18n/#page.lang
+
+  // "auto" reverses the (oldest first) collection, "ascending" and "descending" sort by date
+  let sort = collection.sort === "auto" ? " | reverse" : ` | eleventyFeedSortByDate("${collection.sort}")`;
 
   if(type === "rss") {
     // Nunjucks template
@@ -22,7 +25,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     <description>{{ metadata.subtitle }}</description>
     <language>{{ metadata.language or page.lang }}</language>
     {%- if metadata.icon %}<image>{{ metadata.icon }}</image>{%- endif %}
-    {%- for post in collections['${collection.name}'] | reverse | eleventyFeedHead(${collection.limit}) %}
+    {%- for post in collections['${collection.name}'] | eleventyFeedHasUrl${sort} | eleventyFeedHead(${collection.limit}) %}
     {%- set absolutePostUrl = post.url | htmlBaseUrl(metadata.base) %}
     <item>
       <title>{{ post.data.title }}</title>
@@ -51,7 +54,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
   <subtitle>{{ metadata.subtitle }}</subtitle>
   <link href="{{ permalink | htmlBaseUrl(metadata.base) }}" rel="self" />
   <link href="{{ metadata.base | addPathPrefixToFullUrl }}" />
-  <updated>{{ collections['${collection.name}'] | getNewestCollectionItemDate | dateToRfc3339 }}</updated>
+  <updated>{{ collections['${collection.name}'] | eleventyFeedHasUrl | getNewestCollectionItemDate | dateToRfc3339 }}</updated>
   <id>{{ metadata.base | addPathPrefixToFullUrl }}</id>
   {%- if metadata.icon %}
   <icon>{{ metadata.icon }}</icon>
@@ -65,7 +68,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     <email>{{ metadata.author.email }}</email>
     {%- endif %}
   </author>
-  {%- for post in collections['${collection.name}'] | reverse | eleventyFeedHead(${collection.limit}) %}
+  {%- for post in collections['${collection.name}'] | eleventyFeedHasUrl${sort} | eleventyFeedHead(${collection.limit}) %}
   {%- set absolutePostUrl %}{{ post.url | htmlBaseUrl(metadata.base) }}{% endset %}
   <entry>
     <title>{{ post.data.title }}</title>
@@ -88,7 +91,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
   "language": "{{ metadata.language or page.lang }}",
   "home_page_url": "{{ metadata.base | addPathPrefixToFullUrl }}",
   "feed_url": "{{ permalink | htmlBaseUrl(metadata.base) }}",
-  "description": "{{ metadata.description }}",
+  "description": "{{ metadata.description or metadata.subtitle }}",
   "authors": [
     {
       "name": "{{ metadata.author.name }}"{% if metadata.author.email %},
@@ -97,7 +100,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     }
   ],
   "items": [
-    {%- for post in collections['${collection.name}'] | reverse | eleventyFeedHead(${collection.limit}) %}
+    {%- for post in collections['${collection.name}'] | eleventyFeedHasUrl${sort} | eleventyFeedHead(${collection.limit}) %}
     {%- set absolutePostUrl %}{{ post.url | htmlBaseUrl(metadata.base) }}{% endset %}
     {
       "id": "{{ absolutePostUrl }}",
@@ -115,28 +118,17 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
   throw new Error("Missing or invalid feed type. Received: " + type);
 }
 
-export default function eleventyFeedPlugin(eleventyConfig, options = {}) {
-  eleventyConfig.versionCheck(pkg["11ty"].compatibility);
-
-  // Guaranteed unique, first add wins
-  const pluginHtmlBase = eleventyConfig.resolvePlugin("@11ty/eleventy/html-base-plugin");
-  eleventyConfig.addPlugin(pluginHtmlBase, options.htmlBasePluginOptions || {});
-
-  // Guaranteed unique, first add wins
-  eleventyConfig.addPlugin(rssPlugin, options.rssPluginOptions || {});
-
-  let slugifyFilter = eleventyConfig.getFilter("slugify");
-  let inputPathSuffix = options?.metadata?.title ? `-${slugifyFilter(options?.metadata?.title)}` : "";
-
+// Returns feed template content and data for use with `addTemplate` (requires `rssPlugin`)
+export function getFeedTemplate(options = {}) {
   options = DeepCopy({
     // rss and json also supported
     type: "atom",
     collection: {
       name: false, // required
       limit: 0, // limit number of entries, 0 means no limit
+      sort: "auto", // "auto" reverses the collection, "ascending" or "descending" sorts by date
     },
     outputPath: "/feed.xml",
-    inputPath: `eleventy-plugin-feed${inputPathSuffix}-${options.type || "atom"}.njk`, // TODO make this more unique
     templateData: {},
     metadata: {
       title: "Blog Title",
@@ -155,6 +147,10 @@ export default function eleventyFeedPlugin(eleventyConfig, options = {}) {
   }
   if(typeof options.collection?.name !== "string") {
     throw new Error("Only string is supported in `collection.name` option in feedPlugin from @11ty/eleventy-plugin-rss. Received: " + typeof options.collection?.name);
+  }
+
+  if(!["auto", "ascending", "descending"].includes(options.collection.sort)) {
+    throw new Error("Invalid `collection.sort` option in feedPlugin from @11ty/eleventy-plugin-rss. Expected \"auto\", \"ascending\", or \"descending\", received: " + options.collection.sort);
   }
 
   let eleventyExcludeFromCollections;
@@ -178,18 +174,28 @@ export default function eleventyFeedPlugin(eleventyConfig, options = {}) {
     metadata: options.metadata,
   };
 
-  // Get the first `n` elements of a collection.
-  eleventyConfig.addFilter("eleventyFeedHead", function(array, n) {
-    if(!n || n === 0) {
-      return array;
-    }
-    if(n < 0) {
-      return array.slice(n);
-    }
-    return array.slice(0, n);
-  });
+  return {
+    content: getFeedContent(options),
+    data: templateData,
+  };
+}
 
-  eleventyConfig.addTemplate(options.inputPath, getFeedContent(options), templateData);
+export default function eleventyFeedPlugin(eleventyConfig, options = {}) {
+  eleventyConfig.versionCheck(pkg["11ty"].compatibility);
+
+  // Guaranteed unique, first add wins
+  const pluginHtmlBase = eleventyConfig.resolvePlugin("@11ty/eleventy/html-base-plugin");
+  eleventyConfig.addPlugin(pluginHtmlBase, options.htmlBasePluginOptions || {});
+
+  // Guaranteed unique, first add wins
+  eleventyConfig.addPlugin(rssPlugin, options.rssPluginOptions || {});
+
+  let slugifyFilter = eleventyConfig.getFilter("slugify");
+  let inputPathSuffix = options?.metadata?.title ? `-${slugifyFilter(options?.metadata?.title)}` : "";
+  let inputPath = options.inputPath || `eleventy-plugin-feed${inputPathSuffix}-${options.type || "atom"}.njk`; // TODO make this more unique
+
+  let { content, data } = getFeedTemplate(options);
+  eleventyConfig.addTemplate(inputPath, content, data);
 };
 
 Object.defineProperty(eleventyFeedPlugin, "eleventyPackage", {

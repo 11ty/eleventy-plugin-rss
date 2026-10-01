@@ -15,6 +15,27 @@ export default function eleventyRssPlugin(eleventyConfig, options = {}) {
   const pluginHtmlBase = eleventyConfig.resolvePlugin("@11ty/eleventy/html-base-plugin");
   eleventyConfig.addPlugin(pluginHtmlBase, options.htmlBasePluginOptions || {});
 
+  // Skip entries without a URL (e.g. `permalink: false`), see #66
+  eleventyConfig.addFilter("eleventyFeedHasUrl", function(array) {
+    return array.filter(entry => entry.url);
+  });
+
+  // Sort a copy of a collection by date.
+  eleventyConfig.addFilter("eleventyFeedSortByDate", function(array, direction) {
+    return [...array].sort((a, b) => direction === "ascending" ? a.date - b.date : b.date - a.date);
+  });
+
+  // Get the first `n` elements of a collection.
+  eleventyConfig.addFilter("eleventyFeedHead", function(array, n) {
+    if(!n || n === 0) {
+      return array;
+    }
+    if(n < 0) {
+      return array.slice(n);
+    }
+    return array.slice(0, n);
+  });
+
   // Dates
   eleventyConfig.addNunjucksFilter("getNewestCollectionItemDate", getNewestCollectionItemDate);
   eleventyConfig.addNunjucksFilter("dateToRfc3339", dateRfc3339);
