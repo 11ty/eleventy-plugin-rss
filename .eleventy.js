@@ -7,6 +7,16 @@ import virtualTemplate from "./src/virtualTemplate.js";
 import absoluteUrl from "./src/absoluteUrl.js";
 import convertHtmlToAbsoluteUrls from "./src/htmlToAbsoluteUrls.js";
 
+// Also attach to the default export for v2 compatibility, see #91
+Object.assign(rssPlugin, {
+  feedPlugin: virtualTemplate,
+  dateToRfc3339: dateRfc3339,
+  dateToRfc822: dateRfc822,
+  getNewestCollectionItemDate,
+  absoluteUrl,
+  convertHtmlToAbsoluteUrls,
+});
+
 export default rssPlugin;
 
 export {
