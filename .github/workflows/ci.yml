@@ -27,5 +27,3 @@ jobs:
           package-manager-cache: false
       - run: npm ci
       - run: npm test
-env:
-  YARN_GPG: no
