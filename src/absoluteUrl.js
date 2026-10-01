@@ -1,5 +1,5 @@
-import debugUtil from "debug";
-const debug = debugUtil("Eleventy:Rss");
+import { createDebug } from "obug";
+const debug = createDebug("Eleventy:Rss");
 
 // This is deprecated! Use the Eleventy HTML <base> plugin instead (2.0+)
 export default function(url, base) {

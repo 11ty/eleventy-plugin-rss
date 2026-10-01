@@ -44,7 +44,7 @@
   "dependencies": {
     "@11ty/eleventy-utils": "^2.0.7",
     "@11ty/posthtml-urls": "^1.0.3",
-    "debug": "^4.4.3",
+    "obug": "^3.0.0",
     "posthtml": "^0.16.7"
   }
 }

@@ -1,11 +1,11 @@
-import debugUtil from "debug";
+import { createDebug } from "obug";
 import pkg from "../package.json" with {type: "json"};
 
 import { DeepCopy } from "@11ty/eleventy-utils";
 
 import rssPlugin from "./rssPlugin.js";
 
-const debug = debugUtil("Eleventy:Rss:Feed");
+const debug = createDebug("Eleventy:Rss:Feed");
 
 function getFeedContent({ type, stylesheet, collection, script }) {
   // Note: page.lang comes from the i18n plugin: https://www.11ty.dev/docs/plugins/i18n/#page.lang
