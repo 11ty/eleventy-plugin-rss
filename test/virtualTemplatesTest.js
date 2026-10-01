@@ -1,7 +1,7 @@
 import test from "ava";
 import { feedPlugin } from "../.eleventy.js";
 
-// https://github.com/11ty/eleventy-plugin-rss/issues/50
+// https://github.com/11ty/plugin-rss/issues/50
 test("RSS virtual templates plugin", async (t) => {
 	const { default: Eleventy } = await import("@11ty/eleventy");
 
