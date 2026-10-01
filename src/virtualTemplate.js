@@ -91,7 +91,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
   "language": "{{ metadata.language or page.lang }}",
   "home_page_url": "{{ metadata.base | addPathPrefixToFullUrl }}",
   "feed_url": "{{ permalink | htmlBaseUrl(metadata.base) }}",
-  "description": "{{ metadata.subtitle or metadata.description }}",
+  "description": "{{ metadata.description or metadata.subtitle }}",
   "authors": [
     {
       "name": "{{ metadata.author.name }}"{% if metadata.author.email %},
@@ -118,19 +118,8 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
   throw new Error("Missing or invalid feed type. Received: " + type);
 }
 
-export default function eleventyFeedPlugin(eleventyConfig, options = {}) {
-  eleventyConfig.versionCheck(pkg["11ty"].compatibility);
-
-  // Guaranteed unique, first add wins
-  const pluginHtmlBase = eleventyConfig.resolvePlugin("@11ty/eleventy/html-base-plugin");
-  eleventyConfig.addPlugin(pluginHtmlBase, options.htmlBasePluginOptions || {});
-
-  // Guaranteed unique, first add wins
-  eleventyConfig.addPlugin(rssPlugin, options.rssPluginOptions || {});
-
-  let slugifyFilter = eleventyConfig.getFilter("slugify");
-  let inputPathSuffix = options?.metadata?.title ? `-${slugifyFilter(options?.metadata?.title)}` : "";
-
+// Returns feed template content and data for use with `addTemplate` (requires `rssPlugin`)
+export function getFeedTemplate(options = {}) {
   options = DeepCopy({
     // rss and json also supported
     type: "atom",
@@ -140,7 +129,6 @@ export default function eleventyFeedPlugin(eleventyConfig, options = {}) {
       sort: "auto", // "auto" reverses the collection, "ascending" or "descending" sorts by date
     },
     outputPath: "/feed.xml",
-    inputPath: `eleventy-plugin-feed${inputPathSuffix}-${options.type || "atom"}.njk`, // TODO make this more unique
     templateData: {},
     metadata: {
       title: "Blog Title",
@@ -186,28 +174,28 @@ export default function eleventyFeedPlugin(eleventyConfig, options = {}) {
     metadata: options.metadata,
   };
 
-  // Skip entries without a URL (e.g. `permalink: false`), see #66
-  eleventyConfig.addFilter("eleventyFeedHasUrl", function(array) {
-    return array.filter(entry => entry.url);
-  });
+  return {
+    content: getFeedContent(options),
+    data: templateData,
+  };
+}
 
-  // Sort a copy of a collection by date.
-  eleventyConfig.addFilter("eleventyFeedSortByDate", function(array, direction) {
-    return [...array].sort((a, b) => direction === "ascending" ? a.date - b.date : b.date - a.date);
-  });
+export default function eleventyFeedPlugin(eleventyConfig, options = {}) {
+  eleventyConfig.versionCheck(pkg["11ty"].compatibility);
 
-  // Get the first `n` elements of a collection.
-  eleventyConfig.addFilter("eleventyFeedHead", function(array, n) {
-    if(!n || n === 0) {
-      return array;
-    }
-    if(n < 0) {
-      return array.slice(n);
-    }
-    return array.slice(0, n);
-  });
+  // Guaranteed unique, first add wins
+  const pluginHtmlBase = eleventyConfig.resolvePlugin("@11ty/eleventy/html-base-plugin");
+  eleventyConfig.addPlugin(pluginHtmlBase, options.htmlBasePluginOptions || {});
 
-  eleventyConfig.addTemplate(options.inputPath, getFeedContent(options), templateData);
+  // Guaranteed unique, first add wins
+  eleventyConfig.addPlugin(rssPlugin, options.rssPluginOptions || {});
+
+  let slugifyFilter = eleventyConfig.getFilter("slugify");
+  let inputPathSuffix = options?.metadata?.title ? `-${slugifyFilter(options?.metadata?.title)}` : "";
+  let inputPath = options.inputPath || `eleventy-plugin-feed${inputPathSuffix}-${options.type || "atom"}.njk`; // TODO make this more unique
+
+  let { content, data } = getFeedTemplate(options);
+  eleventyConfig.addTemplate(inputPath, content, data);
 };
 
 Object.defineProperty(eleventyFeedPlugin, "eleventyPackage", {
