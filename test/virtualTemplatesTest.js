@@ -50,3 +50,28 @@ test("RSS virtual templates plugin with `all`", async (t) => {
 	let [ feed ] = results.filter(entry => entry.outputPath.endsWith(".xml"));
 	t.truthy(feed.content.startsWith(`<?xml version="1.0" encoding="utf-8"?>`));
 });
+
+test("JSON virtual template uses `metadata.subtitle` for description", async (t) => {
+	const { default: Eleventy } = await import("@11ty/eleventy");
+
+	let elev = new Eleventy("./test", "./test/_site", {
+		config: function (eleventyConfig) {
+			eleventyConfig.addTemplate("virtual.md", `# Hello`, { tags: ["posts"] })
+
+			eleventyConfig.addPlugin(feedPlugin, {
+				type: "json",
+				outputPath: "/feed.json",
+				collection: {
+					name: "posts",
+				},
+				metadata: {
+					subtitle: "My subtitle",
+				},
+			});
+		},
+	});
+
+	let results = await elev.toJSON();
+	let [ feed ] = results.filter(entry => entry.outputPath.endsWith(".json"));
+	t.is(JSON.parse(feed.content).description, "My subtitle");
+});

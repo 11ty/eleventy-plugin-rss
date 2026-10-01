@@ -88,7 +88,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
   "language": "{{ metadata.language or page.lang }}",
   "home_page_url": "{{ metadata.base | addPathPrefixToFullUrl }}",
   "feed_url": "{{ permalink | htmlBaseUrl(metadata.base) }}",
-  "description": "{{ metadata.description }}",
+  "description": "{{ metadata.subtitle or metadata.description }}",
   "authors": [
     {
       "name": "{{ metadata.author.name }}"{% if metadata.author.email %},
