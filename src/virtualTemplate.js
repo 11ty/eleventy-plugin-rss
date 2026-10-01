@@ -1,14 +1,17 @@
-import { createDebug } from "obug";
+// import { createDebug } from "obug";
 import pkg from "../package.json" with {type: "json"};
 
 import { DeepCopy } from "@11ty/eleventy-utils";
 
 import rssPlugin from "./rssPlugin.js";
 
-const debug = createDebug("Eleventy:Rss:Feed");
+// const debug = createDebug("Eleventy:Rss:Feed");
 
 function getFeedContent({ type, stylesheet, collection, script }) {
   // Note: page.lang comes from the i18n plugin: https://www.11ty.dev/docs/plugins/i18n/#page.lang
+
+  // "auto" reverses the (oldest first) collection, "ascending" and "descending" sort by date
+  let sort = collection.sort === "auto" ? " | reverse" : ` | eleventyFeedSortByDate("${collection.sort}")`;
 
   if(type === "rss") {
     // Nunjucks template
@@ -22,7 +25,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     <description>{{ metadata.subtitle }}</description>
     <language>{{ metadata.language or page.lang }}</language>
     {%- if metadata.icon %}<image>{{ metadata.icon }}</image>{%- endif %}
-    {%- for post in collections.${collection.name} | reverse | eleventyFeedHead(${collection.limit}) %}
+    {%- for post in collections.${collection.name}${sort} | eleventyFeedHead(${collection.limit}) %}
     {%- set absolutePostUrl = post.url | htmlBaseUrl(metadata.base) %}
     <item>
       <title>{{ post.data.title }}</title>
@@ -65,7 +68,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     <email>{{ metadata.author.email }}</email>
     {%- endif %}
   </author>
-  {%- for post in collections['${collection.name}'] | reverse | eleventyFeedHead(${collection.limit}) %}
+  {%- for post in collections['${collection.name}']${sort} | eleventyFeedHead(${collection.limit}) %}
   {%- set absolutePostUrl %}{{ post.url | htmlBaseUrl(metadata.base) }}{% endset %}
   <entry>
     <title>{{ post.data.title }}</title>
@@ -97,7 +100,7 @@ ${stylesheet ? `<?xml-stylesheet href="${stylesheet}" type="text/xsl"?>\n` : ""}
     }
   ],
   "items": [
-    {%- for post in collections['${collection.name}'] | reverse | eleventyFeedHead(${collection.limit}) %}
+    {%- for post in collections['${collection.name}']${sort} | eleventyFeedHead(${collection.limit}) %}
     {%- set absolutePostUrl %}{{ post.url | htmlBaseUrl(metadata.base) }}{% endset %}
     {
       "id": "{{ absolutePostUrl }}",
@@ -134,6 +137,7 @@ export default function eleventyFeedPlugin(eleventyConfig, options = {}) {
     collection: {
       name: false, // required
       limit: 0, // limit number of entries, 0 means no limit
+      sort: "auto", // "auto" reverses the collection, "ascending" or "descending" sorts by date
     },
     outputPath: "/feed.xml",
     inputPath: `eleventy-plugin-feed${inputPathSuffix}-${options.type || "atom"}.njk`, // TODO make this more unique
@@ -157,6 +161,10 @@ export default function eleventyFeedPlugin(eleventyConfig, options = {}) {
     throw new Error("Only string is supported in `collection.name` option in feedPlugin from @11ty/eleventy-plugin-rss. Received: " + typeof options.collection?.name);
   }
 
+  if(!["auto", "ascending", "descending"].includes(options.collection.sort)) {
+    throw new Error("Invalid `collection.sort` option in feedPlugin from @11ty/eleventy-plugin-rss. Expected \"auto\", \"ascending\", or \"descending\", received: " + options.collection.sort);
+  }
+
   let eleventyExcludeFromCollections;
   let eleventyImport;
   if(options.collection.name === "all") {
@@ -177,6 +185,11 @@ export default function eleventyFeedPlugin(eleventyConfig, options = {}) {
     layout: false,
     metadata: options.metadata,
   };
+
+  // Sort a copy of a collection by date.
+  eleventyConfig.addFilter("eleventyFeedSortByDate", function(array, direction) {
+    return [...array].sort((a, b) => direction === "ascending" ? a.date - b.date : b.date - a.date);
+  });
 
   // Get the first `n` elements of a collection.
   eleventyConfig.addFilter("eleventyFeedHead", function(array, n) {
